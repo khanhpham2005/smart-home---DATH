@@ -4,20 +4,25 @@ Complete instructions to run both Backend and Frontend locally.
 
 ---
 
+## 📦 Project Repositories
+
+- 🔗 Frontend (this repo): https://github.com/khanhpham2005/smart-home---DATH.git
+- 🔗 Backend: https://github.com/nhtc2005/smart-home-system.git
+
 ## ✅ Prerequisites
 
 ### **Backend Requirements:**
-- **Java 21** (JDK) - [Download](https://www.oracle.com/java/technologies/downloads/)
-- **Maven 3.8+** - [Download](https://maven.apache.org/download.cgi)
-- **PostgreSQL 12+** - [Download](https://www.postgresql.org/download/)
-- **Git** (optional, for version control)
+- **Java 21** (JDK) 
+- **Maven 3.8+** 
+- **PostgreSQL 12+** 
+- **Git** 
 
 ### **Frontend Requirements:**
-- **Node.js 16+** - [Download](https://nodejs.org/)
+- **Node.js 16+** 
 - **npm 8+** (comes with Node.js)
 
 ### **External Services (Optional):**
-- **Adafruit IO Account** - For IoT device integration - [Sign up](https://io.adafruit.com)
+- **Adafruit IO Account** - For IoT device integration 
 - **MQTT Broker** - For device communication (can use Adafruit IO)
 
 ---
