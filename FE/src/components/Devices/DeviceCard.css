@@ -1,0 +1,139 @@
+.device-card {
+  background: white;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: var(--shadow-md);
+  transition: var(--transition);
+}
+
+.device-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+}
+
+.device-card.active {
+  border-top: 3px solid var(--success-color);
+}
+
+.device-card.inactive {
+  border-top: 3px solid var(--border-color);
+}
+
+.device-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.device-icon {
+  font-size: 28px;
+}
+
+.device-info {
+  flex: 1;
+}
+
+.device-name {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.device-type {
+  font-size: 12px;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.device-status {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.device-status.on {
+  background-color: #dbeafe;
+  color: #0369a1;
+}
+
+.device-status.off {
+  background-color: #fee2e2;
+  color: #991b1b;
+}
+
+.device-controls {
+  display: flex;
+  gap: 8px;
+}
+
+.control-button {
+  flex: 1;
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: var(--transition);
+  cursor: pointer;
+}
+
+.control-button.toggle {
+  border: 2px solid var(--border-color);
+  color: var(--text-primary);
+}
+
+.control-button.toggle.on {
+  background-color: var(--success-color);
+  color: white;
+  border-color: var(--success-color);
+}
+
+.control-button.toggle.on:hover {
+  background-color: #059669;
+}
+
+.control-button.toggle.off {
+  background-color: white;
+  color: var(--danger-color);
+  border-color: var(--danger-color);
+}
+
+.control-button.toggle.off:hover {
+  background-color: #fee2e2;
+}
+
+.control-button.delete {
+  color: var(--danger-color);
+  border: 2px solid var(--danger-color);
+  background-color: white;
+}
+
+.control-button.delete:hover {
+  background-color: #fee2e2;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .device-card {
+    padding: 12px;
+  }
+
+  .device-name {
+    font-size: 14px;
+  }
+
+  .control-button {
+    font-size: 12px;
+  }
+}

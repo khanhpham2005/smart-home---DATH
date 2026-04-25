@@ -1,0 +1,35 @@
+.app {
+  width: 100%;
+  min-height: 100vh;
+  background-color: var(--background-color);
+}
+
+/* Loading Spinner */
+.app-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.app-loading-content {
+  text-align: center;
+  color: white;
+}
+
+.app-loading-spinner {
+  width: 50px;
+  height: 50px;
+  margin: 0 auto 20px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
