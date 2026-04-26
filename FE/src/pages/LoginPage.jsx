@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { Mail, Lock, Loader } from 'lucide-react';
 import { toast } from 'react-toastify';
 import authService from '../services/authService';
@@ -101,6 +101,9 @@ const LoginPage = () => {
             Email: demo@example.com<br />
             Password: demo123<br />
             <br />
+          </p>
+          <p className="signup-link">
+            Don't have an account? <Link to="/register">Sign Up</Link>
           </p>
         </div>
       </div>

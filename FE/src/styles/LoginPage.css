@@ -190,6 +190,24 @@
   color: var(--text-secondary);
   line-height: 1.6;
   font-style: italic;
+  margin-bottom: 16px;
+}
+
+.signup-link {
+  font-size: 14px;
+  color: var(--text-primary);
+}
+
+.signup-link a {
+  color: var(--primary-color);
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.2s ease;
+}
+
+.signup-link a:hover {
+  color: #1e40af;
+  text-decoration: underline;
 }
 
 /* Responsive */
