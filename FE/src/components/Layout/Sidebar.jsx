@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Zap, Settings, X } from 'lucide-react';
+import { Home, Zap, MapPin, Clock, Bell, Settings, X } from 'lucide-react';
 import './Sidebar.css';
 
 const Sidebar = ({ isOpen, onClose }) => {
@@ -16,6 +16,21 @@ const Sidebar = ({ isOpen, onClose }) => {
       path: '/devices',
       label: 'Devices',
       icon: <Zap size={20} />,
+    },
+    {
+      path: '/locations',
+      label: 'Locations',
+      icon: <MapPin size={20} />,
+    },
+    {
+      path: '/schedules',
+      label: 'Schedules',
+      icon: <Clock size={20} />,
+    },
+    {
+      path: '/notifications',
+      label: 'Notifications',
+      icon: <Bell size={20} />,
     },
     {
       path: '/settings',

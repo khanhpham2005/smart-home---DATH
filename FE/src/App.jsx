@@ -9,6 +9,9 @@ import RegisterPage from './pages/RegisterPage';
 import DashboardPage from './pages/DashboardPage';
 import DevicesPage from './pages/DevicesPage';
 import SettingsPage from './pages/SettingsPage';
+import LocationsPage from './pages/LocationsPage';
+import SchedulesPage from './pages/SchedulesPage';
+import NotificationsPage from './pages/NotificationsPage';
 import ProtectedRoute from './components/ProtectedRoute';
 import Layout from './components/Layout/Layout';
 
@@ -51,6 +54,9 @@ function App() {
                   <Route path="/" element={<DashboardPage />} />
                   <Route path="/dashboard" element={<DashboardPage />} />
                   <Route path="/devices" element={<DevicesPage />} />
+                  <Route path="/locations" element={<LocationsPage />} />
+                  <Route path="/schedules" element={<SchedulesPage />} />
+                  <Route path="/notifications" element={<NotificationsPage />} />
                   <Route path="/settings" element={<SettingsPage />} />
                   <Route path="*" element={<Navigate to="/" replace />} />
                 </Routes>
