@@ -8,11 +8,7 @@ const useSensorStore = create((set) => ({
     timestamp: null,
   },
 
-  sensorHistory: {
-    temperature: [],
-    humidity: [],
-    light: [],
-  },
+  sensorHistory: {},
 
   setSensorData: (data) =>
     set((state) => ({
@@ -23,21 +19,20 @@ const useSensorStore = create((set) => ({
       },
     })),
 
-  addSensorHistory: (type, value) =>
+  addSensorHistory: (sensorId, value, timestamp) =>
     set((state) => ({
       sensorHistory: {
         ...state.sensorHistory,
-        [type]: [...state.sensorHistory[type], { value, timestamp: new Date() }].slice(-100),
+        [sensorId]: [
+          ...(state.sensorHistory[sensorId] || []),
+          { value, timestamp: timestamp || new Date().toISOString() },
+        ].slice(-100), // Keep last 100 readings
       },
     })),
 
   clearHistory: () =>
     set({
-      sensorHistory: {
-        temperature: [],
-        humidity: [],
-        light: [],
-      },
+      sensorHistory: {},
     }),
 }));
 

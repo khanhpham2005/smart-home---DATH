@@ -6,7 +6,7 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - REACT_APP_API_URL=http://backend:3001/api
+      - REACT_APP_API_URL=http://backend:8080/api
       - REACT_APP_ADAFRUIT_URL=https://io.adafruit.com/api/v2
     depends_on:
       - backend

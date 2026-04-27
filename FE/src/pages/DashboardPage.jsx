@@ -5,7 +5,9 @@ import SensorChart from '../components/Sensors/SensorChart';
 import QuickDeviceControl from '../components/Devices/QuickDeviceControl';
 import sensorService from '../services/sensorService';
 import actuatorService from '../services/actuatorService';
+import webSocketService from '../services/webSocketService';
 import { useSensorStore } from '../store/sensorStore';
+import { useAuthStore } from '../store/authStore';
 import '../styles/DashboardPage.css';
 
 const DashboardPage = () => {
@@ -13,6 +15,7 @@ const DashboardPage = () => {
   const [sensors, setSensors] = useState({});
   const [actuators, setActuators] = useState([]);
   const { sensorHistory, addSensorHistory } = useSensorStore();
+  const { token, user } = useAuthStore();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -32,10 +35,19 @@ const DashboardPage = () => {
               timestamp: latestData.timestamp,
             };
             
-            // Add to history
-            addSensorHistory(`sensor-${sensor.id}`, latestData.value);
+            // Fetch history data for charts (last 24 hours)
+            const historyData = await sensorService.getHistory(sensor.id);
+            if (historyData && historyData.length > 0) {
+              historyData.forEach((point) => {
+                addSensorHistory(`sensor-${sensor.id}`, point.value, point.timestamp);
+              });
+            } else {
+              // Fallback: add latest reading if no history
+              addSensorHistory(`sensor-${sensor.id}`, latestData.value);
+            }
           } catch (error) {
             console.warn(`Failed to fetch data for sensor ${sensor.id}`, error);
+            addSensorHistory(`sensor-${sensor.id}`, 0);
           }
         }
         setSensors(sensorDataMap);
@@ -53,10 +65,72 @@ const DashboardPage = () => {
 
     fetchData();
 
-    // Set up auto-refresh every 5 seconds
-    const interval = setInterval(fetchData, 5000);
-    return () => clearInterval(interval);
-  }, []);
+    // Get refresh interval from settings (default 5 seconds)
+    const savedSettings = localStorage.getItem('appSettings');
+    const settings = savedSettings ? JSON.parse(savedSettings) : {};
+    const refreshInterval = (settings.autoRefreshInterval || 5) * 1000;
+
+    // Set up auto-refresh with configurable interval
+    const interval = setInterval(fetchData, refreshInterval);
+
+    // Set up WebSocket connection for real-time updates
+    if (token && user?.id) {
+      webSocketService.connect(
+        token,
+        () => {
+          console.log('WebSocket connected');
+          // Subscribe to user-specific topic for real-time updates
+          webSocketService.subscribe(`/topic/users/${user.id}`, (message) => {
+            if (message.type === 'SENSOR_DATA') {
+              // Update sensor data in real-time
+              setSensors((prev) => ({
+                ...prev,
+                [message.payload.sensorId]: {
+                  ...prev[message.payload.sensorId],
+                  value: message.payload.value,
+                  timestamp: message.timestamp,
+                },
+              }));
+              addSensorHistory(`sensor-${message.payload.sensorId}`, message.payload.value);
+            } else if (message.type === 'ACTUATOR_STATE') {
+              // Update actuator state in real-time
+              setActuators((prev) =>
+                prev.map((act) =>
+                  act.id === message.payload.actuatorId
+                    ? { ...act, state: message.payload.state }
+                    : act
+                )
+              );
+            }
+          });
+        },
+        (error) => {
+          console.error('WebSocket connection error:', error);
+        }
+      );
+    }
+
+    return () => {
+      clearInterval(interval);
+      webSocketService.disconnect();
+    };
+  }, [token, user?.id, addSensorHistory]);
+
+  const handleActuatorStateChange = async (actuatorId, newState) => {
+    try {
+      await actuatorService.setActuatorState(actuatorId, newState);
+      // Update local state immediately
+      setActuators((prev) =>
+        prev.map((act) =>
+          act.id === actuatorId ? { ...act, state: newState } : act
+        )
+      );
+      toast.success('Actuator state updated');
+    } catch (error) {
+      toast.error('Failed to update actuator state');
+      console.error(error);
+    }
+  };
 
   if (loading) {
     return (
@@ -137,7 +211,7 @@ const DashboardPage = () => {
       {actuators.length > 0 && (
         <section className="dashboard-section">
           <h2 className="section-title">Quick Device Control</h2>
-          <QuickDeviceControl devices={actuators} />
+          <QuickDeviceControl devices={actuators} onToggle={handleActuatorStateChange} />
         </section>
       )}
 

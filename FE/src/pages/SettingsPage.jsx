@@ -37,10 +37,19 @@ const SettingsPage = () => {
         <section className="settings-section">
           <h2 className="section-title">User Profile</h2>
           <div className="setting-item">
-            <label>Name</label>
+            <label>First Name</label>
             <input
               type="text"
-              value={user?.name || ''}
+              value={user?.firstName || ''}
+              disabled
+              className="setting-input disabled"
+            />
+          </div>
+          <div className="setting-item">
+            <label>Last Name</label>
+            <input
+              type="text"
+              value={user?.lastName || ''}
               disabled
               className="setting-input disabled"
             />

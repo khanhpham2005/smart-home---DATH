@@ -4,13 +4,16 @@ import actuatorService from '../../services/actuatorService';
 import { toast } from 'react-toastify';
 import './QuickDeviceControl.css';
 
-const QuickDeviceControl = ({ devices }) => {
+const QuickDeviceControl = ({ devices, onToggle }) => {
   const handleToggle = async (actuator) => {
     try {
       const newState = actuator.state === 'ON' ? 'OFF' : 'ON';
-      await actuatorService.setActuatorState(actuator.id, newState);
-      toast.success(`${actuator.name} turned ${newState}`);
-      // Note: Component should refresh data from parent
+      if (onToggle) {
+        await onToggle(actuator.id, newState);
+      } else {
+        await actuatorService.setActuatorState(actuator.id, newState);
+        toast.success(`${actuator.name} turned ${newState}`);
+      }
     } catch (error) {
       toast.error(`Failed to control ${actuator.name}`);
       console.error(error);

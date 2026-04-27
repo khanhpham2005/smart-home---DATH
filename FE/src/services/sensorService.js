@@ -1,5 +1,13 @@
 import api from './api';
-import { generateMockSensorData } from './mockData';
+import { 
+  generateMockSensorData, 
+  generateMockSensorDataBySensorId,
+  generateMockSensorTrendData,
+  generateMockSensorHistoryData,
+  mockSensors, 
+  mockSensorDataReadings,
+  getMockSensorCurrentValue 
+} from './mockData';
 
 const DEMO_MODE = process.env.REACT_APP_DEMO_MODE === 'true';
 
@@ -8,7 +16,7 @@ const sensorService = {
   getAllSensors: async () => {
     try {
       if (DEMO_MODE) {
-        return [];
+        return mockSensors;
       }
 
       const response = await api.get('/sensors/all');
@@ -23,9 +31,9 @@ const sensorService = {
     try {
       if (DEMO_MODE) {
         return {
-          content: [],
-          totalElements: 0,
-          totalPages: 0,
+          content: mockSensors,
+          totalElements: mockSensors.length,
+          totalPages: 1,
           currentPage: 0,
         };
       }
@@ -47,7 +55,9 @@ const sensorService = {
   getSensor: async (sensorId) => {
     try {
       if (DEMO_MODE) {
-        throw new Error('Sensor not found');
+        const sensor = mockSensors.find((s) => s.id === sensorId);
+        if (!sensor) throw new Error('Sensor not found');
+        return sensor;
       }
 
       const response = await api.get(`/sensors/${sensorId}`);
@@ -61,7 +71,7 @@ const sensorService = {
   getSensorsByDevice: async (deviceId) => {
     try {
       if (DEMO_MODE) {
-        return [];
+        return mockSensors.filter((s) => s.deviceId === deviceId);
       }
 
       const response = await api.get(`/sensors?deviceId=${deviceId}`);
@@ -75,7 +85,12 @@ const sensorService = {
   getLatestReading: async (sensorId) => {
     try {
       if (DEMO_MODE) {
-        return generateMockSensorData()[0];
+        return generateMockSensorDataBySensorId(sensorId) || {
+          id: `reading-${sensorId}`,
+          sensorId,
+          value: getMockSensorCurrentValue(sensorId),
+          timestamp: new Date().toISOString(),
+        };
       }
 
       const response = await api.get(`/sensor-data/latest?sensorId=${sensorId}`);
@@ -89,7 +104,8 @@ const sensorService = {
   getHistory: async (sensorId, fromTime, toTime) => {
     try {
       if (DEMO_MODE) {
-        return generateMockSensorData();
+        // Return realistic sensor trend data similar to backend format
+        return generateMockSensorHistoryData(sensorId, fromTime, toTime);
       }
 
       const params = {

@@ -1,4 +1,5 @@
 import api from './api';
+import { mockActuators } from './mockData';
 
 const DEMO_MODE = process.env.REACT_APP_DEMO_MODE === 'true';
 
@@ -7,7 +8,7 @@ const actuatorService = {
   getAllActuators: async () => {
     try {
       if (DEMO_MODE) {
-        return [];
+        return mockActuators;
       }
 
       const response = await api.get('/actuators/all');
@@ -22,9 +23,9 @@ const actuatorService = {
     try {
       if (DEMO_MODE) {
         return {
-          content: [],
-          totalElements: 0,
-          totalPages: 0,
+          content: mockActuators,
+          totalElements: mockActuators.length,
+          totalPages: 1,
           currentPage: 0,
         };
       }
@@ -46,7 +47,9 @@ const actuatorService = {
   getActuator: async (actuatorId) => {
     try {
       if (DEMO_MODE) {
-        throw new Error('Actuator not found');
+        const actuator = mockActuators.find((a) => a.id === actuatorId);
+        if (!actuator) throw new Error('Actuator not found');
+        return actuator;
       }
 
       const response = await api.get(`/actuators/${actuatorId}`);
@@ -60,7 +63,7 @@ const actuatorService = {
   getActuatorsByDevice: async (deviceId) => {
     try {
       if (DEMO_MODE) {
-        return [];
+        return mockActuators.filter((a) => a.deviceId === deviceId);
       }
 
       const response = await api.get(`/actuators?deviceId=${deviceId}`);

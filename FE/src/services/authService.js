@@ -31,11 +31,29 @@ const authService = {
       // Production mode: use real API (connects to actual backend)
       const response = await api.post('/auth/login', { email, password });
       if (response.data.token) {
+        // Map backend response to frontend format (backend sends firstName/lastName)
+        const userData = {
+          id: response.data.user?.id,
+          name: `${response.data.user?.firstName || ''} ${response.data.user?.lastName || ''}`.trim(),
+          firstName: response.data.user?.firstName,
+          lastName: response.data.user?.lastName,
+          email: response.data.user?.email,
+        };
         localStorage.setItem('token', response.data.token);
-        localStorage.setItem('user', JSON.stringify(response.data.user));
+        localStorage.setItem('user', JSON.stringify(userData));
         localStorage.setItem('expiresAt', response.data.expiresAt);
       }
-      return response.data;
+      return {
+        token: response.data.token,
+        user: {
+          id: response.data.user?.id,
+          name: `${response.data.user?.firstName || ''} ${response.data.user?.lastName || ''}`.trim(),
+          firstName: response.data.user?.firstName,
+          lastName: response.data.user?.lastName,
+          email: response.data.user?.email,
+        },
+        expiresAt: response.data.expiresAt,
+      };
     } catch (error) {
       throw error.response?.data || error;
     }
