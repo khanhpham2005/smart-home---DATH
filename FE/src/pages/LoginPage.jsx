@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Mail, Lock, Loader } from 'lucide-react';
+import { Loader } from 'lucide-react';
 import { toast } from 'react-toastify';
 import authService from '../services/authService';
 import { useAuthStore } from '../store/authStore';
@@ -50,13 +50,12 @@ const LoginPage = () => {
           <div className="form-group">
             <label htmlFor="email" className="form-label">Email Address</label>
             <div className="input-wrapper">
-              <Mail className="input-icon" size={20} />
               <input
                 type="email"
                 id="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="your@email.com"
+                placeholder="Email Address"
                 className="form-input"
                 disabled={loading}
               />
@@ -66,7 +65,6 @@ const LoginPage = () => {
           <div className="form-group">
             <label htmlFor="password" className="form-label">Password</label>
             <div className="input-wrapper">
-              <Lock className="input-icon" size={20} />
               <input
                 type="password"
                 id="password"
