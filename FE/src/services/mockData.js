@@ -310,3 +310,139 @@ export const setMockDeviceState = (deviceId, status) => {
     mockDeviceStates[deviceId] = status;
   }
 };
+
+// Mock locations for location management
+export const mockLocations = [
+  {
+    id: '1',
+    name: 'Living Room',
+    description: 'Main living area with entertainment devices',
+    deviceCount: 2,
+    createdAt: '2025-01-10T08:00:00Z',
+    updatedAt: '2025-04-27T10:00:00Z',
+  },
+  {
+    id: '2',
+    name: 'Bedroom',
+    description: 'Master bedroom with climate control',
+    deviceCount: 1,
+    createdAt: '2025-01-12T09:30:00Z',
+    updatedAt: '2025-04-27T11:00:00Z',
+  },
+  {
+    id: '3',
+    name: 'Kitchen',
+    description: 'Kitchen with smart lighting',
+    deviceCount: 1,
+    createdAt: '2025-01-14T07:15:00Z',
+    updatedAt: '2025-04-27T12:00:00Z',
+  },
+  {
+    id: '4',
+    name: 'Hallway',
+    description: 'Entrance hallway with ventilation',
+    deviceCount: 1,
+    createdAt: '2025-01-16T06:45:00Z',
+    updatedAt: '2025-04-27T13:00:00Z',
+  },
+];
+
+// Store for mock locations (in-memory)
+let mockLocationsStore = [...mockLocations];
+
+export const getMockLocations = () => mockLocationsStore;
+
+export const setMockLocations = (locations) => {
+  mockLocationsStore = locations;
+};
+
+// Mock schedules for automation (matches backend ScheduleResponse)
+export const mockSchedules = [
+  {
+    id: 1,
+    userId: 1,
+    actuatorId: 1,
+    mode: 'DAILY',
+    days: [],
+    time: '08:00:00',
+    action: 'ON',
+    createdAt: '2025-02-01T10:00:00Z',
+    lastExecutedAt: null,
+  },
+  {
+    id: 2,
+    userId: 1,
+    actuatorId: 2,
+    mode: 'DAILY',
+    days: [],
+    time: '22:00:00',
+    action: 'OFF',
+    createdAt: '2025-02-05T15:30:00Z',
+    lastExecutedAt: null,
+  },
+  {
+    id: 3,
+    userId: 1,
+    actuatorId: 3,
+    mode: 'WEEKLY',
+    days: [1, 2, 3, 4, 5],
+    time: '07:00:00',
+    action: 'ON',
+    createdAt: '2025-02-10T12:00:00Z',
+    lastExecutedAt: null,
+  },
+];
+
+// Store for mock schedules (in-memory)
+let mockSchedulesStore = [...mockSchedules];
+
+export const getMockSchedules = () => mockSchedulesStore;
+
+export const setMockSchedules = (schedules) => {
+  mockSchedulesStore = schedules;
+};
+
+// Mock notifications for alerts
+export const mockNotifications = [
+  {
+    id: '1',
+    type: 'SENSOR_ALERT',
+    title: 'High Temperature Alert',
+    message: 'Living room temperature exceeded 28°C',
+    timestamp: new Date(Date.now() - 3600000).toISOString(),
+    read: false,
+  },
+  {
+    id: '2',
+    type: 'DEVICE_STATUS',
+    title: 'Device Offline',
+    message: 'Kitchen light device went offline',
+    timestamp: new Date(Date.now() - 7200000).toISOString(),
+    read: false,
+  },
+  {
+    id: '3',
+    type: 'SCHEDULE_EXECUTED',
+    title: 'Schedule Executed',
+    message: 'Living room fan turned on by schedule',
+    timestamp: new Date(Date.now() - 10800000).toISOString(),
+    read: true,
+  },
+  {
+    id: '4',
+    type: 'DEVICE_STATUS',
+    title: 'Device Online',
+    message: 'Bedroom light device came back online',
+    timestamp: new Date(Date.now() - 14400000).toISOString(),
+    read: true,
+  },
+];
+
+// Store for mock notifications (in-memory)
+let mockNotificationsStore = [...mockNotifications];
+
+export const getMockNotifications = () => mockNotificationsStore;
+
+export const setMockNotifications = (notifications) => {
+  mockNotificationsStore = notifications;
+};

@@ -12,8 +12,10 @@ const SchedulesPage = () => {
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({
     actuatorId: '',
-    cronExpression: '',
-    state: 'ON',
+    mode: 'DAILY',
+    time: '08:00',
+    days: [1, 2, 3, 4, 5],
+    action: 'ON',
   });
 
   useEffect(() => {
@@ -27,9 +29,19 @@ const SchedulesPage = () => {
       const actuatorsList = await actuatorService.getAllActuators();
       setActuators(actuatorsList);
       
-      // Note: Individual schedule fetching is done via /actuators/{id}/schedules
-      // For now, we'll show an empty list until user adds schedules
-      setSchedules([]);
+      // Fetch all schedules for all actuators
+      const allSchedules = [];
+      for (const actuator of actuatorsList) {
+        try {
+          const schedules = await actuatorService.getSchedules(actuator.id);
+          if (schedules && schedules.length > 0) {
+            allSchedules.push(...schedules);
+          }
+        } catch (error) {
+          console.warn(`Failed to fetch schedules for actuator ${actuator.id}`, error);
+        }
+      }
+      setSchedules(allSchedules);
     } catch (error) {
       toast.error('Failed to load data');
       console.error(error);
@@ -41,20 +53,25 @@ const SchedulesPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    if (!formData.actuatorId || !formData.cronExpression) {
+    if (!formData.actuatorId || !formData.time) {
       toast.error('Please fill all required fields');
       return;
     }
 
     try {
+      const [hours, minutes] = formData.time.split(':');
+      const timeString = `${hours}:${minutes}:00`;
+      
       await scheduleService.createSchedule({
         actuatorId: parseInt(formData.actuatorId),
-        cronExpression: formData.cronExpression,
-        state: formData.state,
+        mode: formData.mode,
+        time: timeString,
+        days: formData.mode === 'WEEKLY' ? formData.days : [],
+        action: formData.action,
       });
       
       toast.success('Schedule created successfully');
-      setFormData({ actuatorId: '', cronExpression: '', state: 'ON' });
+      setFormData({ actuatorId: '', mode: 'DAILY', time: '08:00', days: [1,2,3,4,5], action: 'ON' });
       setShowForm(false);
       fetchData();
     } catch (error) {
@@ -130,25 +147,58 @@ const SchedulesPage = () => {
             </div>
 
             <div className="form-group">
-              <label htmlFor="cronExpression">Cron Expression *</label>
-              <input
-                id="cronExpression"
-                type="text"
-                placeholder="e.g., 0 8 * * * (8 AM every day)"
-                value={formData.cronExpression}
-                onChange={(e) => setFormData({ ...formData, cronExpression: e.target.value })}
-              />
-              <small className="form-hint">
-                Format: minute hour day month dayOfWeek
-              </small>
+              <label htmlFor="mode">Schedule Mode *</label>
+              <select
+                id="mode"
+                value={formData.mode}
+                onChange={(e) => setFormData({ ...formData, mode: e.target.value })}
+              >
+                <option value="ONCE">Once</option>
+                <option value="DAILY">Daily</option>
+                <option value="WEEKLY">Weekly</option>
+              </select>
             </div>
 
             <div className="form-group">
-              <label htmlFor="state">Action</label>
+              <label htmlFor="time">Time *</label>
+              <input
+                id="time"
+                type="time"
+                value={formData.time}
+                onChange={(e) => setFormData({ ...formData, time: e.target.value })}
+              />
+            </div>
+
+            {formData.mode === 'WEEKLY' && (
+              <div className="form-group">
+                <label>Days of Week</label>
+                <div className="days-selector">
+                  {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].map((day, index) => (
+                    <label key={index} className="day-checkbox">
+                      <input
+                        type="checkbox"
+                        checked={formData.days.includes(index)}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setFormData({ ...formData, days: [...formData.days, index] });
+                          } else {
+                            setFormData({ ...formData, days: formData.days.filter(d => d !== index) });
+                          }
+                        }}
+                      />
+                      {day.slice(0, 3)}
+                    </label>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            <div className="form-group">
+              <label htmlFor="action">Action *</label>
               <select
-                id="state"
-                value={formData.state}
-                onChange={(e) => setFormData({ ...formData, state: e.target.value })}
+                id="action"
+                value={formData.action}
+                onChange={(e) => setFormData({ ...formData, action: e.target.value })}
               >
                 <option value="ON">Turn ON</option>
                 <option value="OFF">Turn OFF</option>
@@ -164,7 +214,7 @@ const SchedulesPage = () => {
                 className="btn-secondary"
                 onClick={() => {
                   setShowForm(false);
-                  setFormData({ actuatorId: '', cronExpression: '', state: 'ON' });
+                  setFormData({ actuatorId: '', mode: 'DAILY', time: '08:00', days: [1,2,3,4,5], action: 'ON' });
                 }}
               >
                 Cancel
@@ -189,9 +239,18 @@ const SchedulesPage = () => {
               <div key={schedule.id} className="schedule-card">
                 <div className="schedule-info">
                   <h3>{getActuatorName(schedule.actuatorId)}</h3>
-                  <p className="schedule-cron">{schedule.cronExpression}</p>
+                  <p className="schedule-mode">
+                    <strong>{schedule.mode}</strong> at {schedule.time.slice(0, 5)}
+                  </p>
+                  {schedule.mode === 'WEEKLY' && schedule.days.length > 0 && (
+                    <p className="schedule-days">
+                      Days: {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+                        .filter((_, i) => schedule.days.includes(i))
+                        .join(', ')}
+                    </p>
+                  )}
                   <p className="schedule-action">
-                    Action: <span className={`state-${schedule.state}`}>{schedule.state}</span>
+                    Action: <span className={`state-${schedule.action}`}>{schedule.action}</span>
                   </p>
                 </div>
                 <button

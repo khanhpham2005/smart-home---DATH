@@ -1,4 +1,5 @@
 import api from './api';
+import { getMockLocations } from './mockData';
 
 const DEMO_MODE = process.env.REACT_APP_DEMO_MODE === 'true';
 
@@ -7,7 +8,7 @@ const locationService = {
   getAllLocations: async () => {
     try {
       if (DEMO_MODE) {
-        return [];
+        return getMockLocations();
       }
 
       const response = await api.get('/locations/all');

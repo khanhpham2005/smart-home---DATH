@@ -161,7 +161,9 @@ const actuatorService = {
   getSchedules: async (actuatorId) => {
     try {
       if (DEMO_MODE) {
-        return [];
+        const { getMockSchedules } = await import('./mockData.js');
+        const allSchedules = getMockSchedules();
+        return allSchedules.filter(s => s.actuatorId === parseInt(actuatorId));
       }
 
       const response = await api.get(`/actuators/${actuatorId}/schedules`);

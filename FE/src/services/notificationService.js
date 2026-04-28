@@ -1,4 +1,5 @@
 import api from './api';
+import { getMockNotifications } from './mockData';
 
 const DEMO_MODE = process.env.REACT_APP_DEMO_MODE === 'true';
 
@@ -7,7 +8,7 @@ const notificationService = {
   getAllNotifications: async () => {
     try {
       if (DEMO_MODE) {
-        return [];
+        return getMockNotifications();
       }
 
       const response = await api.get('/notifications');
